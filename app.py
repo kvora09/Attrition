@@ -55,15 +55,29 @@ st.markdown("""
 def generate_data(N=2000, seed=42):
     np.random.seed(seed)
     EDUCATION_LEVELS = {1:"No Formal Qualifications",2:"High School",3:"Bachelor",4:"Master",5:"Doctorate"}
-    levels=[\"L1\",\"L2\",\"L3\",\"L4\",\"L5\",\"L6\"]; level_probs=[0.35,0.28,0.18,0.11,0.06,0.02]
-    level_salary={\"L1\":400000,\"L2\":650000,\"L3\":950000,\"L4\":1400000,\"L5\":2000000,\"L6\":3000000}
-    dept_mul={\"Engineering\":1.20,\"Finance\":1.10,\"Legal\":1.15,\"Sales\":0.95,\"Marketing\":0.95,\"HR\":0.90,\"Operations\":0.85}
-    depts=[\"Engineering\",\"Sales\",\"HR\",\"Finance\",\"Marketing\",\"Operations\",\"Legal\"]
-    dept_w=[0.35,0.20,0.08,0.10,0.10,0.12,0.05]
-    locs=[\"Bengaluru\",\"Mumbai\",\"Hyderabad\",\"Pune\",\"Chennai\",\"Delhi\",\"Remote\"]
-    loc_p=[0.30,0.20,0.15,0.12,0.10,0.08,0.05]
-    first_names=[\"Aarav\",\"Priya\",\"Rohan\",\"Sneha\",\"Vikram\",\"Ananya\",\"Arjun\",\"Kavya\",\"Dev\",\"Meera\"]
-    last_names=[\"Sharma\",\"Patel\",\"Kumar\",\"Singh\",\"Mehta\",\"Gupta\",\"Joshi\",\"Nair\",\"Rao\",\"Iyer\"]
+    levels = ["L1","L2","L3","L4","L5","L6"];level_probs = [0.35,0.28,0.18,0.11,0.06,0.02]
+    level_salary={"L1":400000,"L2":650000,"L3":950000,"L4":1400000,"L5":2000000,"L6":3000000}
+   dept_mul = {
+    "Engineering": 1.20,
+    "Finance": 1.10,
+    "Legal": 1.15,
+    "Sales": 0.95,
+    "Marketing": 0.95,
+    "HR": 0.90,
+    "Operations": 0.85
+}
+
+depts = ["Engineering", "Sales", "HR", "Finance", "Marketing", "Operations", "Legal"]
+
+dept_w = [0.35, 0.20, 0.08, 0.10, 0.10, 0.12, 0.05]
+
+locs = ["Bengaluru", "Mumbai", "Hyderabad", "Pune", "Chennai", "Delhi", "Remote"]
+
+loc_p = [0.30, 0.20, 0.15, 0.12, 0.10, 0.08, 0.05]
+
+first_names = ["Aarav", "Priya", "Rohan", "Sneha", "Vikram", "Ananya", "Arjun", "Kavya", "Dev", "Meera"]
+
+last_names = ["Sharma", "Patel", "Kumar", "Singh", "Mehta", "Gupta", "Joshi", "Nair", "Rao", "Iyer"]
 
     hire_start=datetime(2010,1,1); ref_date=datetime(2024,6,30)
     hire_dates=[hire_start+timedelta(days=int(x)) for x in np.random.uniform(0,(datetime(2023,12,31)-hire_start).days,N)]
@@ -72,12 +86,12 @@ def generate_data(N=2000, seed=42):
     level=np.random.choice(levels,N,p=level_probs)
     loc=np.random.choice(locs,N,p=loc_p)
     dept=np.random.choice(depts,N,p=dept_w)
-    gender=np.random.choice([\"Male\",\"Female\",\"Non-Binary\"],N,p=[0.52,0.44,0.04])
+    gender=np.random.choice(["Male","Female","Non-Binary"],N,p=[0.52,0.44,0.04])
     age=np.clip(np.random.normal(35,9,N).astype(int),22,60)
     edu_id=np.random.choice([1,2,3,4,5],N,p=[0.03,0.10,0.45,0.32,0.10])
-    marital=np.random.choice([\"Single\",\"Married\",\"Divorced\"],N,p=[0.35,0.50,0.15])
-    overtime=np.random.choice([\"Yes\",\"No\"],N,p=[0.28,0.72])
-    biz_travel=np.random.choice([\"None\",\"Rarely\",\"Frequently\"],N,p=[0.30,0.45,0.25])
+    marital=np.random.choice(["Single","Married","Divorced"],N,p=[0.35,0.50,0.15])
+    overtime=np.random.choice(["Yes","No"],N,p=[0.28,0.72])
+    biz_travel=np.random.choice(["None","Rarely","Frequently"],N,p=[0.30,0.45,0.25])
     dist_km=np.clip(np.random.exponential(15,N).astype(int),1,100)
     stock_opt=np.random.choice([0,1,2,3],N,p=[0.35,0.35,0.20,0.10])
     salary=np.array([int(level_salary[l]*dept_mul[d]*np.random.uniform(0.85,1.15)) for l,d in zip(level,dept)])
@@ -93,82 +107,124 @@ def generate_data(N=2000, seed=42):
     srate=np.random.randint(1,6,N); mrate=np.clip(srate+np.random.randint(-1,2,N),1,5)
     tr_av=np.random.randint(2,8,N); tr_tk=np.array([np.random.randint(0,t+1) for t in tr_av])
 
-    risk=(-1.5*mkt+0.8*(overtime==\"Yes\").astype(int)-0.5*(job_s/5)-0.4*(env_s/5)-0.3*(wlb/5)
+    risk=(-1.5*mkt+0.8*(overtime=="Yes").astype(int)-0.5*(job_s/5)-0.4*(env_s/5)-0.3*(wlb/5)
           +0.6*(yrs_promo/(np.array(yac)+0.1))+0.4*(l90/5)-0.3*(awards/4)
-          +0.3*(biz_travel==\"Frequently\").astype(int)+0.2*(dist_km/100)+np.random.normal(0,0.5,N))
+          +0.3*(biz_travel=="Frequently").astype(int)+0.2*(dist_km/100)+np.random.normal(0,0.5,N))
     attr_prob=1/(1+np.exp(-risk))
     attr=(np.random.uniform(0,1,N)<attr_prob).astype(int)
 
-    emp_ids=[f\"EMP{str(i+1).zfill(5)}\" for i in range(N)]
-    df=pd.DataFrame({
-        \"EmployeeID\":emp_ids, \"FirstName\":np.random.choice(first_names,N),
-        \"LastName\":np.random.choice(last_names,N), \"Gender\":gender, \"Age\":age,
-        \"Level\":level, \"Location\":loc, \"Department\":dept,
-        \"BusinessTravel\":biz_travel, \"DistanceFromHome_KM\":dist_km,
-        \"MaritalStatus\":marital, \"Salary\":salary, \"MarketRateRatio\":mkt.round(3),
-        \"StockOptionLevel\":stock_opt, \"OverTime\":overtime,
-        \"YearsAtCompany\":np.round(yac,2), \"YearsInMostRecentRole\":np.round(yrs_role,2),
-        \"YearsSinceLastPromotion\":np.round(yrs_promo,2), \"YearsWithCurrManager\":np.round(yrs_mgr,2),
-        \"EducationLevelID\":edu_id, \"EducationLevel\":[EDUCATION_LEVELS[i] for i in edu_id],
-        \"Leave_Last30Days\":l30, \"Leave_Last90Days\":l90,
-        \"Leave_Last180Days\":l180, \"Leave_Last365Days\":l365,
-        \"AwardsReceived\":awards, \"Attrition\":[\"Yes\" if a else \"No\" for a in attr],
-        \"EnvironmentSatisfaction\":env_s, \"JobSatisfaction\":job_s,
-        \"RelationshipSatisfaction\":rel_s, \"WorkLifeBalance\":wlb,
-        \"SelfRating\":srate, \"ManagerRating\":mrate,
-        \"TrainingOpportunitiesWithinYear\":tr_av, \"TrainingOpportunitiesTaken\":tr_tk,
-    })
+    emp_ids=[f"EMP{str(i+1).zfill(5)}" for i in range(N)]
+    df = pd.DataFrame({
+    "EmployeeID": emp_ids,
+    "FirstName": np.random.choice(first_names, N),
+    "LastName": np.random.choice(last_names, N),
+    "Gender": gender,
+    "Age": age,
+    "Level": level,
+    "Location": loc,
+    "Department": dept,
+    "BusinessTravel": biz_travel,
+    "DistanceFromHome_KM": dist_km,
+    "MaritalStatus": marital,
+    "Salary": salary,
+    "MarketRateRatio": mkt.round(3),
+    "StockOptionLevel": stock_opt,
+    "OverTime": overtime,
+    "YearsAtCompany": np.round(yac, 2),
+    "YearsInMostRecentRole": np.round(yrs_role, 2),
+    "YearsSinceLastPromotion": np.round(yrs_promo, 2),
+    "YearsWithCurrManager": np.round(yrs_mgr, 2),
+    "EducationLevelID": edu_id,
+    "EducationLevel": [EDUCATION_LEVELS[i] for i in edu_id],
+    "Leave_Last30Days": l30,
+    "Leave_Last90Days": l90,
+    "Leave_Last180Days": l180,
+    "Leave_Last365Days": l365,
+    "AwardsReceived": awards,
+    "Attrition": ["Yes" if a else "No" for a in attr],
+    "EnvironmentSatisfaction": env_s,
+    "JobSatisfaction": job_s,
+    "RelationshipSatisfaction": rel_s,
+    "WorkLifeBalance": wlb,
+    "SelfRating": srate,
+    "ManagerRating": mrate,
+    "TrainingOpportunitiesWithinYear": tr_av,
+    "TrainingOpportunitiesTaken": tr_tk,
+})
     # Feature engineering
-    df[\"TrainingUtilizationRate\"]=df[\"TrainingOpportunitiesTaken\"]/df[\"TrainingOpportunitiesWithinYear\"].clip(lower=1)
-    df[\"AvgSatisfaction\"]=df[[\"EnvironmentSatisfaction\",\"JobSatisfaction\",\"RelationshipSatisfaction\",\"WorkLifeBalance\"]].mean(axis=1)
-    df[\"RatingGap\"]=df[\"ManagerRating\"]-df[\"SelfRating\"]
-    df[\"PromotionStagnation\"]=df[\"YearsSinceLastPromotion\"]/(df[\"YearsAtCompany\"]+0.1)
-    df[\"LeaveIntensity\"]=df[\"Leave_Last90Days\"]/90
-    df[\"PayDeficit\"]=(1-df[\"MarketRateRatio\"]).clip(lower=0)
-    df[\"IsNewbie\"]=(df[\"YearsAtCompany\"]<1).astype(int)
-    df[\"IsVeteran\"]=(df[\"YearsAtCompany\"]>10).astype(int)
-    df[\"OverTimeFlag\"]=(df[\"OverTime\"]==\"Yes\").astype(int)
-    return df
+  df["TrainingUtilizationRate"] = df["TrainingOpportunitiesTaken"] / df["TrainingOpportunitiesWithinYear"].clip(lower=1)
+
+df["AvgSatisfaction"] = df[[
+    "EnvironmentSatisfaction",
+    "JobSatisfaction",
+    "RelationshipSatisfaction",
+    "WorkLifeBalance"
+]].mean(axis=1)
+
+df["RatingGap"] = df["ManagerRating"] - df["SelfRating"]
+
+df["PromotionStagnation"] = df["YearsSinceLastPromotion"] / (df["YearsAtCompany"] + 0.1)
+
+df["LeaveIntensity"] = df["Leave_Last90Days"] / 90
+
+df["PayDeficit"] = (1 - df["MarketRateRatio"]).clip(lower=0)
+
+df["IsNewbie"] = (df["YearsAtCompany"] < 1).astype(int)
+
+df["IsVeteran"] = (df["YearsAtCompany"] > 10).astype(int)
+
+df["OverTimeFlag"] = (df["OverTime"] == "Yes").astype(int)
+
+return df
 
 @st.cache_resource
 def train_all_models(df):
-    target=\"Attrition\"
-    drop_cols=[\"EmployeeID\",\"FirstName\",\"LastName\",\"Attrition\",\"EducationLevel\"]
+    target="Attrition"
+    drop_cols=["EmployeeID","FirstName","LastName","Attrition","EducationLevel"]
     feature_cols=[c for c in df.columns if c not in drop_cols]
     X=df[feature_cols].copy()
-    y=(df[target]==\"Yes\").astype(int)
-    for c in X.select_dtypes(include=[\"object\",\"category\"]).columns:
+    y=(df[target]=="Yes").astype(int)
+    for c in X.select_dtypes(include=["object","category"]).columns:
         X[c]=LabelEncoder().fit_transform(X[c].astype(str))
     X_tr,X_te,y_tr,y_te=train_test_split(X,y,test_size=0.2,random_state=42,stratify=y)
     scaler=StandardScaler()
     X_trs=scaler.fit_transform(X_tr); X_tes=scaler.transform(X_te)
     cv=StratifiedKFold(n_splits=5,shuffle=True,random_state=42)
     models={
-        \"Logistic Regression\":LogisticRegression(max_iter=1000,class_weight=\"balanced\",C=0.5),
-        \"Decision Tree\":DecisionTreeClassifier(max_depth=6,class_weight=\"balanced\",random_state=42),
-        \"Random Forest\":RandomForestClassifier(n_estimators=100,max_depth=8,class_weight=\"balanced\",random_state=42),
-        \"Gradient Boosting\":GradientBoostingClassifier(n_estimators=100,learning_rate=0.05,max_depth=4,random_state=42),
-        \"K-Nearest Neighbors\":KNeighborsClassifier(n_neighbors=9),
-        \"SVM (RBF)\":SVC(kernel=\"rbf\",probability=True,class_weight=\"balanced\",C=1.0),
+        models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000, class_weight="balanced", C=0.5),
+    "Decision Tree": DecisionTreeClassifier(max_depth=6, class_weight="balanced", random_state=42),
+    "Random Forest": RandomForestClassifier(n_estimators=100, max_depth=8, class_weight="balanced", random_state=42),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100, learning_rate=0.05, max_depth=4, random_state=42),
+    "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=9),
+    "SVM (RBF)": SVC(kernel="rbf", probability=True, class_weight="balanced", C=1.0),
+}
     }
     results={}
     for name,model in models.items():
-        sc=(name in [\"Logistic Regression\",\"K-Nearest Neighbors\",\"SVM (RBF)\"])
+        sc=(name in ["Logistic Regression","K-Nearest Neighbors","SVM (RBF)"])
         Xtr,Xte=(X_trs,X_tes) if sc else (X_tr.values,X_te.values)
-        cv_auc=cross_val_score(model,Xtr,y_tr,cv=cv,scoring=\"roc_auc\")
+        cv_auc=cross_val_score(model,Xtr,y_tr,cv=cv,scoring="roc_auc")
         model.fit(Xtr,y_tr)
         yp=model.predict(Xte); ypr=model.predict_proba(Xte)[:,1]
-        results[name]={\"model\":model,\"scaled\":sc,\"y_pred\":yp,\"y_prob\":ypr,
-                        \"cv_auc\":cv_auc.mean(),\"cv_auc_std\":cv_auc.std(),
-                        \"test_auc\":roc_auc_score(y_te,ypr),\"test_f1\":f1_score(y_te,yp),
-                        \"test_acc\":accuracy_score(y_te,yp)}
-    best_name=max(results,key=lambda k:results[k][\"test_auc\"])
+        results[name]={{
+    "model": model,
+    "scaled": sc,
+    "y_pred": yp,
+    "y_prob": ypr,
+    "cv_auc": cv_auc.mean(),
+    "cv_auc_std": cv_auc.std(),
+    "test_auc": roc_auc_score(y_te, ypr),
+    "test_f1": f1_score(y_te, yp),
+    "test_acc": accuracy_score(y_te, yp)
+}
+    best_name=max(results,key=lambda k:results[k]["test_auc"])
     best=results[best_name]
     Xall=scaler.transform(X) if best[\"scaled\"] else X.values
     df2=df.copy()
-    df2[\"AttritionProb\"]=best[\"model\"].predict_proba(Xall)[:,1]
-    df2[\"RiskCategory\"]=pd.cut(df2[\"AttritionProb\"],bins=[0,.25,.5,.75,1.0],
-                                  labels=[\"Low\",\"Medium\",\"High\",\"Critical\"])
+    df2["AttritionProb"]=best["model"].predict_proba(Xall)[:,1]
+    df2["RiskCategory"]=pd.cut(df2["AttritionProb"],bins=[0,.25,.5,.75,1.0],
+                                  labels=["Low","Medium","High","Critical"])
     return df2,results,best_name,X,y,y_te,scaler,feature_cols
 
 # ── Load data ────────────────────────────────────────────────
