@@ -132,3 +132,6 @@ Use real HR dataset
 Add SHAP explainability
 Build dashboard (Tableau/Power BI)
 Integrate with HR systems
+
+## Streamlit app 
+https://attritionmodel.streamlit.app/
